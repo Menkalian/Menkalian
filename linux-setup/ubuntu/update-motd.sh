@@ -43,7 +43,7 @@ printf "
 "
 
 printf "\033[38;5;214m
-Running %s %s %s \033[39m\n" "$(uname -o)" "$(uname -r)" "$(uname -m)"
+Running %s %s %s \033[39m\n" "\$(uname -o)" "\$(uname -r)" "\$(uname -m)"
 EOF
 
 cat << EOF > 11-cake
@@ -79,12 +79,12 @@ function print_cake() {
 "
 }
 
-today=$(date +"%m-%d")
+today=\$(date +"%m-%d")
 
-if [ "$today" = "01-07" ]; then
+if [ "\$today" = "01-07" ]; then
     print_cake
 else
-    if [ $RANDOM -lt 1024 ]; then
+    if [ \$RANDOM -lt 1024 ]; then
         print_cake
     fi
 fi
@@ -102,7 +102,7 @@ printf "
 ------------------------------------------------- SYSTEM-INFORMATION --------------------------------------------------
 %s
 -----------------------------------------------------------------------------------------------------------------------
-\033[39m" "$(/bin/date)" "$(/usr/bin/landscape-sysinfo)"
+\033[39m" "\$(/bin/date)" "\$(/usr/bin/landscape-sysinfo)"
 EOF
 
 chmod +x 11-cake
