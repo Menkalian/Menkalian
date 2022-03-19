@@ -110,6 +110,7 @@ chmod +x 40-sysinfo
 
 # Remove unwanted information
 rm 10-help-text
+rm 50-motd-news
 unlink 50-landscape-sysinfo
 
 echo "Successfully updated motd"
