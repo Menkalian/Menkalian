@@ -1,0 +1,5 @@
+- name: Configure local machine
+  hosts: local
+  roles:
+    - common
+    - dev

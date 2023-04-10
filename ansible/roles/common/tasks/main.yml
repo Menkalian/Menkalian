@@ -1,0 +1,192 @@
+- name   : install packages
+  package:
+    name :
+      - bash
+      - bc
+      - clang
+      - cmake
+      - make
+    state:
+      latest
+
+- name : install cargo/rust
+  block:
+    - name         : check if cargo is installed
+      shell        : command -v /root/.cargo/bin/rustup
+      register     : cargo_exists
+      ignore_errors: yes
+    - name   : Download Installer
+      when   : cargo_exists is failed
+      get_url:
+        url  : https://sh.rustup.rs
+        dest : /tmp/sh.rustup.rs
+        mode : '0755'
+        force: 'yes'
+    - name : install rust/cargo
+      when : cargo_exists is failed
+      shell: /tmp/sh.rustup.rs -y
+    - name : update rust
+      when : cargo_exists is success
+      shell:
+        cmd: /root/.cargo/bin/rustup update
+
+- name : Install cargo crates
+  vars :
+    install_path : /usr/local
+    install_state: latest
+  block:
+    - name                   : install 'ripgrep' via cargo for all users
+      community.general.cargo:
+        name : ripgrep
+        path : "{{ install_path }}"
+        state: "{{ install_state }}"
+    - name                   : install 'bat' via cargo for all users
+      community.general.cargo:
+        name : bat
+        path : "{{ install_path }}"
+        state: "{{ install_state }}"
+    - name                   : install 'exa' via cargo for all users
+      community.general.cargo:
+        name : exa
+        path : "{{ install_path }}"
+        state: "{{ install_state }}"
+    - name                   : install 'du-dust' via cargo for all users
+      community.general.cargo:
+        name : du-dust
+        path : "{{ install_path }}"
+        state: "{{ install_state }}"
+    - name                   : install 'fd-find' via cargo for all users
+      community.general.cargo:
+        name : fd-find
+        path : "{{ install_path }}"
+        state: "{{ install_state }}"
+    - name                   : install 'procs' via cargo for all users
+      community.general.cargo:
+        name : procs
+        path : "{{ install_path }}"
+        state: "{{ install_state }}"
+    - name                   : install 'tealdeer' via cargo for all users
+      community.general.cargo:
+        name : tealdeer
+        path : "{{ install_path }}"
+        state: "{{ install_state }}"
+    - name                   : install 'bottom' via cargo for all users
+      community.general.cargo:
+        name : bottom
+        path : "{{ install_path }}"
+        state: "{{ install_state }}"
+    - name                   : install 'difftastic' via cargo for all users
+      community.general.cargo:
+        name : difftastic
+        path : "{{ install_path }}"
+        state: "{{ install_state }}"
+    - name                   : install 'sd' via cargo for all users
+      community.general.cargo:
+        name : sd
+        path : "{{ install_path }}"
+        state: "{{ install_state }}"
+    - name                   : install 'starship' via cargo for all users
+      community.general.cargo:
+        name : starship
+        path : "{{ install_path }}"
+        state: "{{ install_state }}"
+
+- name: copy starship configuration
+  copy:
+    src  : "{{ playbook_dir }}/roles/common/files/starship/config.toml"
+    dest : "/home/{{ my_username }}/.config/starship.toml"
+    owner: "{{ my_username }}"
+
+- name        : configure motd
+  include_role:
+    name: claranet.motd
+  vars        :
+    motd_template: "{{ playbook_dir }}/roles/common/files/motd/template.j2"
+
+- name : Configure aliases
+  block:
+    - name      : Configure 'cat' alias for my user
+      lineinfile:
+        path=/home/{{ my_username }}/.bashrc
+        line="alias cat='bat'"
+        owner={{ my_username }}
+        regexp='^alias cat='bat'$'
+        state=present
+        insertafter=EOF
+        create=True
+    - name      : Configure 'grep' alias for my user
+      lineinfile:
+        path=/home/{{ my_username }}/.bashrc
+        line="alias grep='rg'"
+        owner={{ my_username }}
+        regexp='^alias grep='rg'$'
+        state=present
+        insertafter=EOF
+        create=True
+    - name      : Configure 'ls' alias for my user
+      lineinfile:
+        path=/home/{{ my_username }}/.bashrc
+        line="alias ls='exa'"
+        owner={{ my_username }}
+        regexp='^alias ls='exa'$'
+        state=present
+        insertafter=EOF
+        create=True
+    - name      : Configure 'top' alias for my user
+      lineinfile:
+        path=/home/{{ my_username }}/.bashrc
+        line="alias top='btm'"
+        owner={{ my_username }}
+        regexp='^alias top='btm'$'
+        state=present
+        insertafter=EOF
+        create=True
+
+- name : configure ssh user
+  vars :
+    ssh_path: $HOME/.ssh
+  block:
+    - name: ensure .ssh directory exists
+      file:
+        dest : "{{ ssh_path }}"
+        mode : 0700
+        owner: root
+        state: directory
+    - name: copy ssh key
+      copy:
+        src  : "{{ playbook_dir }}/roles/common/files/ssh/ansible_watertank_ed25519"
+        dest : "{{ ssh_path }}/ansible.watertank.ed25519"
+        mode : 0600
+        owner: root
+    - name: copy ssh config
+      copy:
+        src  : "{{ playbook_dir }}/roles/common/files/ssh/root-ssh-config"
+        dest : "{{ ssh_path }}/config"
+        mode : 0600
+        owner: root
+    - name: copy ssh known_hosts
+      copy:
+        src  : "{{ playbook_dir }}/roles/common/files/ssh/root-ssh-known_hosts"
+        dest : "{{ ssh_path }}/known_hosts"
+        mode : 0600
+        owner: root
+
+# This has to be the last .bashrc modification. otherwise this will not work.
+- name : Configure starship for bash
+  block:
+    - name      : remove starship from bashrc
+      lineinfile:
+        path=/home/{{ my_username }}/.bashrc
+        line="eval \"$(starship init bash)\""
+        owner={{ my_username }}
+        state=absent
+        insertafter=EOF
+        create=True
+    - name      : add starship at last line in bashrc
+      lineinfile:
+        path=/home/{{ my_username }}/.bashrc
+        line="eval \"$(starship init bash)\""
+        owner={{ my_username }}
+        state=present
+        insertafter=EOF
+        create=True

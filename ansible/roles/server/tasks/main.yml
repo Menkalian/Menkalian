@@ -1,0 +1,25 @@
+- name   : install packages
+  package:
+    name :
+      - ufw
+    state:
+      latest
+
+# Reject all ports
+- name                 : Allow everything and enable UFW
+  community.general.ufw:
+    state : enabled
+    policy: reject
+
+- name: Configure firewall for SSH port
+  block:
+    # Limit SSH connections
+    - community.general.ufw:
+        rule : limit
+        port : ssh
+        proto: tcp
+    # Enable SSH connections
+    - community.general.ufw:
+        rule: allow
+        name: OpenSSH
+        port: ssh

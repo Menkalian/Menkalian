@@ -1,0 +1,10 @@
+Host watertank storage storage.menkalian.de
+  HostName storage.menkalian.de
+  User data_user
+  PreferredAuthentications publickey
+  IdentityFile ~/.ssh/ansible.watertank.ed25519
+
+Host *
+  IdentitiesOnly yes
+  UseRoaming no
+  Compression yes

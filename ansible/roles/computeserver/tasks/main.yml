@@ -1,0 +1,91 @@
+- name : mount watertank file storage
+  block:
+    - name: Create mountpoint for watertank
+      file:
+        path : /data_watertank
+        state: directory
+    - name               : mount watertank
+      ansible.posix.mount:
+        boot  : true
+        path  : /watertank_data
+        src   : watertank:/data
+        fstype: fuse.sshfs
+        state : mounted
+
+- name : Configure firewall for webpages
+  block:
+    - name                 : Enable HTTP port
+      community.general.ufw:
+        rule: allow
+        name: HTTP
+        port: '80'
+    - name                 : Enable HTTPs port
+      community.general.ufw:
+        rule: allow
+        name: HTTPs
+        port: '443'
+    - name                 : Enable Plex port
+      community.general.ufw:
+        rule: allow
+        name: Plex
+        port: '32400'
+
+- name : Configure firewall for mailserver
+  block:
+    - community.general.ufw:
+        rule: allow
+        port: '25'
+    - community.general.ufw:
+        rule: allow
+        port: '143'
+    - community.general.ufw:
+        rule: allow
+        port: '465'
+    - community.general.ufw:
+        rule: allow
+        port: '587'
+    - community.general.ufw:
+        rule: allow
+        port: '993'
+
+- name : Configure firewall for steam ports
+  block:
+    - community.general.ufw:
+        rule: allow
+        port: '27015'
+    - community.general.ufw:
+        rule : allow
+        proto: udp
+        port : '27015'
+    - community.general.ufw:
+        rule : allow
+        proto: udp
+        port : '27020'
+    - community.general.ufw:
+        rule : allow
+        proto: udp
+        port : '27031:27036'
+
+- name : Reset previously used firewall ports
+  block:
+
+- name        : Install docker
+  include_role:
+    name: geerlingguy.docker
+  vars        :
+    docker_edition              : 'ce'
+    docker_packages             :
+      - "docker-{{ docker_edition }}"
+      - "docker-{{ docker_edition }}-cli"
+    docker_packages_state       : latest
+    docker_add_repo             : true
+    docker_install_compose      : true
+    docker_service_manage       : true
+    docker_service_state        : started
+    docker_service_enabled      : true
+    docker_restart_handler_state: restarted
+    docker_users                :
+      - "{{ my_username }}"
+    docker_daemon_options       :
+      log-opts:
+        max-size: "100m"

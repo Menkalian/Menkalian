@@ -1,0 +1,188 @@
+#!/bin/bash
+#
+# MotD script
+
+# pam_motd does not carry the environment
+[ -f /etc/default/locale ] && . /etc/default/locale
+export LANG
+
+# Define colors
+LB="\033[38;5;45m"
+OL="\033[38;5;214m"
+OG="\033[38;5;208m"
+YL="\033[38;5;229m"
+GR="\033[38;5;242m"
+M="\033[38;5;127m"
+Y="\033[38;5;191m"
+W="\e[0;39m"
+G="\e[1;32m"
+R="\e[1;31m"
+dim="\e[2m"
+undim="\e[0m"
+RST="\033[39m"
+
+#
+# Header: Print a cool header so I feel special
+#
+printf "
+${LB}                .,-:;//;:=,                                                    _                                        ${RST}
+${LB}            . :H@@@MM@M#H/.,+&;,                 /\                           | |                                       ${RST}
+${LB}         ,/X+ +M@@M@MM&=,-&HMMM@X/,             /  \     _ __     ___   _ __  | |_   _   _   _ __    ___                ${RST}
+${LB}       -+@MM; §M@@MH+-,;XMMMM@MMMM@+-          / /\ \   | '_ \   / _ \ | '__| | __| | | | | | '__|  / _ \               ${RST}
+${LB}      ;@M@@M- XM@X;. -+XXXXXHHH@M@M#@/.       / ____ \  | |_) | |  __/ | |    | |_  | |_| | | |    |  __/               ${RST}
+${LB}    ,&MM@@MH ,@&=             .---=-=:=,.    /_/    \_\ | .__/   \___| |_|     \__|  \__,_| |_|     \___|               ${RST}
+${LB}    =@#@@@MX.,                -&HX§§&&&:;               | |                                                             ${RST}
+${LB}   =-./@M@M§                   .;@MMMM@MM:              |_|                                                             ${RST}
+${LB}   X@/ -§MM/                    . +MM@@@M§     _____          _                                                         ${RST}
+${LB}  ,@M@H: :@:                    . =X#@@@@-    / ____|        (_)                                                        ${RST}
+${LB}  ,@@@MMX, .                    /H- ;@M@M=   | (___     ___   _    ___   _ __     ___    ___                            ${RST}
+${LB}  .H@@@@M@+,                    &MM+..&#§.    \___ \   / __| | |  / _ \ | '_ \   / __|  / _ \                           ${RST}
+${LB}   /MMMM@MMH/.                  XM@MH; =;     ____) | | (__  | | |  __/ | | | | | (__  |  __/                           ${RST}
+${LB}    /&+&§XHH@§=              , .H@@@@MX,     |_____/   \___| |_|  \___| |_| |_|  \___|  \___|                           ${RST}
+${LB}     .=--------.           -&H.,@@@@@MX,                                                                                ${RST}
+${LB}     .&MM@@@HHHXX§§§&+- .:§MMX =M@@MM&.       _             _                         _                 _               ${RST}
+${LB}       =XMMM@MM@MM#H;,-+HMM@M+ /MMMX=        | |     __ _  | |__   ___   _ _   __ _  | |_   ___   _ _  (_)  ___   ___   ${RST}
+${LB}         =&@M@M#@§-.=§@MM@@@M; &M&=          | |__  / _' | | '_ \ / _ \ | '_| / _' | |  _| / _ \ | '_| | | / -_) (_-<   ${RST}
+${LB}           ,:+§+-,/H#MMMMMMM@= =,            |____| \__,_| |_.__/ \___/ |_|   \__,_|  \__| \___/ |_|   |_| \___| /__/   ${RST}
+${LB}                 =++&&&&+/:-.                                                                                           ${RST}
+"
+
+printf "
+${OL}Running %s %s %s ${RST}
+" "$(uname -o)" "$(uname -r)" "$(uname -m)"
+
+#
+# Prints cake on my birthday and with some chance on any other day :)
+#
+
+function print_cake() {
+    printf "
+
+\033[38;5;208m              ,:/+/-                                                                                                   \033[39m
+\033[38;5;208m              /M/              .,-=;//;-                                                                               \033[39m
+\033[38;5;208m         .:/= ;MH/,    ,=/+&§XH@MM#@:                                                                                  \033[39m
+\033[38;5;208m        -§##@+§###@H@MMM#######H:.    -/H#                                                                             \033[39m
+\033[38;5;208m   .,H@H@ X######@ -H#####@+-     -+H###@X     @@@@@@@ @@@  @@@ @@@@@@@@ @@@@@@@  @@@@@@@@                             \033[39m
+\033[38;5;208m    .,@##H;      +XM##M/,     =&@###@X;-         @@!   @@!  @@@ @@!      @@!  @@@ @@!                                  \033[39m
+\033[38;5;208m  X&-  :M##########§.    .:&M###@&:              @!!   @!@!@!@! @!!!:!   @!@!!@!  @!!!:!                               \033[39m
+\033[38;5;208m  M##H,   +H@@@§/-.  ,;§M###@&,          -       !!:   !!:  !!! !!:      !!: :!!  !!:                                  \033[39m
+\033[38;5;208m  M####M=,,---,.-&&H####M§:          ,+@##        :     :   : : : :: :::  :   : : : :: :::                             \033[39m
+\033[38;5;208m  @##################@/.         :&H##@§-                                                                              \033[39m
+\033[38;5;208m  M###############H,         ;HM##M§=            @@@  @@@@@@       @@@@@@@  @@@@@@  @@@  @@@ @@@@@@@@                  \033[39m
+\033[38;5;208m  #################.    .=§M##M§=                @@! !@@          !@@      @@!  @@@ @@!  !@@ @@!                       \033[39m
+\033[38;5;208m  ################H..;XM##M§=          .:+       !!@  !@@!!       !@!      @!@!@!@! @!@@!@!  @!!!:!                    \033[39m
+\033[38;5;208m  M###################@&=           =+@MH&       !!:     !:!      :!!      !!:  !!! !!: :!!  !!:                       \033[39m
+\033[38;5;208m  @################M/.          =+H#X&=          :   ::.: :        :: :: :  :   : :  :   ::: : :: :::                  \033[39m
+\033[38;5;208m  =+M##############M,       -/X#X+;.                                                                                   \033[39m
+\033[38;5;208m    .;XM##########H=    ,/X#H+:,                                                                                       \033[39m
+\033[38;5;208m       .=+HM######M+/+HM@+=.                                                                                           \033[39m
+\033[38;5;208m           ,:/&XM####H/.                                                                                               \033[39m
+\033[38;5;208m                ,.:=-.                                                                                                 \033[39m
+
+"
+}
+
+today=$(date +"%m-%d")
+
+if [ "$today" = "01-07" ]; then
+    print_cake
+else
+    if [ $RANDOM -lt 4096 ]; then
+        print_cake
+    fi
+fi
+
+#
+# System information
+# Modified from the template by claranet.motd
+#
+
+# config
+warn_usage=80
+crit_usage=95
+storage_warn_usage=75
+storage_max_usage=90
+bar_width=50
+
+# get load averages
+IFS=" " read LOAD1 LOAD5 LOAD15 <<<$(awk '{ print $1,$2,$3 }' /proc/loadavg)
+# get free memory
+IFS=" " read USED AVAIL TOTAL <<<$(free -htm | grep "Mem" | awk {'print $3,$7,$2'})
+# get processes
+PROCESS=$(ps -eo user=|sort|uniq -c | awk '{ print $2 " " $1 }')
+PROCESS_ALL=$(echo "$PROCESS"| awk {'print $2'} | awk '{ SUM += $1} END { print SUM }')
+PROCESS_ROOT=$(echo "$PROCESS"| grep root | awk {'print $2'})
+PROCESS_USER=$(echo "$PROCESS"| grep -v root | awk {'print $2'} | awk '{ SUM += $1} END { print SUM }')
+# get processors
+PROCESSOR_NAME=$(grep "model name" /proc/cpuinfo | cut -d ' ' -f3- | awk {'print $0'} | head -1)
+PROCESSOR_COUNT=$(grep -ioP 'processor\t:' /proc/cpuinfo | wc -l)
+
+function loadcolor() {
+    TMP=$(bc<<<"100*$1")
+    LOAD=$(printf "%.0f\n" "$TMP")
+    if [[ LOAD -eq 0 ]]; then
+      echo "${GR}"
+    elif [[ LOAD -gt crit_usage ]]; then
+      echo "${R}"
+    elif [[ LOAD -gt warn_usage ]]; then
+      echo "${Y}"
+    else
+      echo "${G}"
+    fi
+}
+
+echo -e "${M}\nSystem info:${RST}
+${RST}  ${M}Hostname$dim····$undim${M}:${RST} $LB${HOSTNAME}
+${RST}  ${M}Distro$dim······$undim${M}:${RST} $LB$(grep "PRETTY_NAME" /etc/*release | cut -d "=" -f 2- | sed 's/"//g')
+${RST}  ${M}Kernel$dim······$undim${M}:${RST} ${RST}$(uname -sr)
+${RST}  ${M}Uptime$dim······$undim${M}:${RST} ${RST}$(uptime -p)
+${RST}  ${M}Load$dim········$undim${M}:${RST} $(loadcolor $LOAD1)$LOAD1${RST} (1m), $(loadcolor $LOAD5)$LOAD5${RST} (5m), $(loadcolor $LOAD15)$LOAD15${RST} (15m)
+${RST}  ${M}Processes$dim···$undim${M}:${RST} $G$PROCESS_ROOT${RST} (root), $G$PROCESS_USER${RST} (user), $G$PROCESS_ALL${RST} (total)
+${RST}  ${M}CPU$dim·········$undim${M}:${RST} ${RST}$PROCESSOR_NAME ($G$PROCESSOR_COUNT${RST} vCPU)
+${RST}  ${M}Memory$dim······$undim${M}:${RST} $G$USED${RST} used, $G$AVAIL${RST} avail, $G$TOTAL${RST} total"
+
+
+# disk usage: ignore zfs, squashfs & tmpfs
+mapfile -t dfs < <(df -H -x zfs -x squashfs -x tmpfs -x devtmpfs -x overlay --output=target,pcent,size | tail -n+2)
+printf "\nDisk usage:\n"
+
+for line in "${dfs[@]}"; do
+    # get disk usage
+    usage=$(echo "$line" | awk '{print $2}' | sed 's/%//')
+    used_width=$((($usage*$bar_width)/100))
+    # color is green if usage < storage_max_usage, else red
+    if [ "${usage}" -ge "${storage_max_usage}" ]; then
+        color=$R
+    elif [ "${usage}" -ge "${storage_warn_usage}" ]; then
+        color=$Y
+    else
+        color=$G
+    fi
+    # print green/red bar until used_width
+    bar="[${color}"
+    for ((i=0; i<$used_width; i++)); do
+        bar+="="
+    done
+    # print dimmmed bar until end
+    bar+="${W}${dim}"
+    for ((i=$used_width; i<$bar_width; i++)); do
+        bar+="·"
+    done
+    bar+="${undim}]"
+    # print usage line & bar
+    echo "${line}" | awk '{ printf("%-31s%+3s used out of %+4s\n", $1, $2, $3); }' | sed -e 's/^/  /'
+    echo -e "${bar}" | sed -e 's/^/  /'
+done
+
+printf "\n"
+
+
+#
+# Show the current system time and greet user
+#
+USER=$(whoami)
+printf "
+${LB}It is %s.${RST}
+
+${LB}Welcome %s${RST}
+" "$(/bin/date)" "${USER^^}"

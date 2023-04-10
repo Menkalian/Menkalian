@@ -1,0 +1,5 @@
+# Public variables
+my_username: kilian
+
+# Protected variables
+root_password: "{{ vault_root_password }}"

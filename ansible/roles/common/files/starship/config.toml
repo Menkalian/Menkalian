@@ -1,0 +1,129 @@
+
+[[battery.display]]
+threshold = 10
+style = 'bold red'
+
+[[battery.display]]
+threshold = 30
+style = 'bold yellow'
+
+[[battery.display]]
+threshold = 100
+style = 'bold green'
+
+[character]
+success_symbol = '[⌨️](bold green)'
+error_symbol = '[ ](bold red)'
+
+[cmake]
+style = 'bold 22'
+
+[cmd_duration]
+show_milliseconds=true
+
+[conda]
+symbol = '󱔎 '
+
+[container]
+style = 'bold 33 dimmed'
+
+[directory]
+truncation_symbol = '󰇘/'
+home_symbol = ' '
+
+[env_var.USER]
+default = 'unknown'
+symbol = ' '
+format = 'as [$env_value]($style) '
+style = 'italic 75'
+
+[gradle]
+symbol = '󰟆 '
+style = 'bold 43'
+
+[hostname]
+ssh_only = false
+style = 'bold dimmed 42'
+
+[jobs]
+number_threshold = 1
+symbol = ' '
+
+[kotlin]
+symbol = ' '
+
+[lua]
+symbol = '󰢱 '
+
+[memory_usage]
+disabled = false
+symbol = '󰍛 '
+style = 'bold dimmed 215'
+format = '$symbol [${ram} \($ram_pct\)( | ${swap})]($style) '
+
+[os]
+disabled = false
+
+# This is the default symbols table.
+[os.symbols]
+Alpine = "  "
+Amazon = "  "
+Android = "󰀲  "
+Arch = "󰣇  "
+CentOS = "󱄚  "
+Debian = "  "
+DragonFly = "🐉 "
+Emscripten = "🔗 "
+EndeavourOS = "  "
+Fedora = "󱄛  "
+FreeBSD = "  "
+Garuda = "🦅 "
+Gentoo = "  "
+HardenedBSD = "🛡️ "
+Illumos = "  "
+Linux = "  "
+Macos = "  "
+Manjaro = "󱘊  "
+Mariner = "🌊 "
+MidnightBSD = "🌘 "
+Mint = "  "
+NetBSD = "🚩 "
+NixOS = "  "
+OpenBSD = "  "
+OpenCloudOS = "☁️ "
+openEuler = "🦉 "
+openSUSE = "  "
+OracleLinux = "🦴 "
+Pop = "  "
+Raspbian = "  "
+Redhat = "󱄛  "
+RedHatEnterprise = "  "
+Redox = "🧪 "
+Solus = "  "
+SUSE = "  "
+Ubuntu = "  "
+Unknown = "  "
+Windows = "  "
+
+[php]
+symbol = ' '
+
+[python]
+symbol = ' '
+style = 'bold 220'
+
+[scala]
+symbol = ' '
+
+[shlvl]
+disabled = false
+threshold = 1
+symbol = '󰕇 '
+
+[sudo]
+disabled = false
+symbol = ' '
+format = '[$symbol]($style) '
+style = 'bold 222'
+
+

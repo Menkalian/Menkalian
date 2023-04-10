@@ -1,0 +1,22 @@
+- name: install packages
+  ansible.builtin.package:
+    name:
+      - openjdk-17-jdk-headless
+      - sshfs
+      - ghc
+    state:
+      latest
+
+- name: mount watertank file storage
+  block:
+    - name: Create mountpoint for watertank
+      file:
+        path: /data_watertank
+        state: directory
+    - name: mount watertank
+      ansible.posix.mount:
+        boot: true
+        path: /watertank_data
+        src: watertank:/data
+        fstype: fuse.sshfs
+        state: mounted

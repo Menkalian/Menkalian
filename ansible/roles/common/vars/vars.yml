@@ -1,0 +1,3 @@
+
+# Secret (vault encrypted) vars
+root_ssh_watertank_passkey: {{ vault_root_ssh_watertank_passkey }}

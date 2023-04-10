@@ -1,0 +1,25 @@
+computeservers:
+  hosts:
+    aquarium:
+      ansible_host: menkalian.de
+      ansible_become: true
+      ansible_become_user: root
+      ansible_become_password: "{{ root_password }}"
+
+#storageservers:
+#  hosts:
+#    watertank:
+#      ansible_host: storage.menkalian.de
+#      ansible_become: true
+#      ansible_become_user: root
+#      ansible_become_password: "{{ root_password }}"
+
+servers:
+  children:
+    computeservers:
+#    storageservers:
+
+local:
+  hosts:
+    devmachine:
+      ansible_connection: local

@@ -1,0 +1,10 @@
+- name: Configure Servers
+  hosts: servers
+  roles:
+    - common
+    - server
+
+#- name: Configure Compute-Server
+#  hosts: computeservers
+#  roles:
+#    - computeserver
