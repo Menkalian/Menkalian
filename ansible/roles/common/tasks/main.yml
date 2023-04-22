@@ -6,8 +6,14 @@
       - clang
       - cmake
       - make
+      - openssh-server
     state:
       latest
+
+- name: set user shell to bash
+  user:
+      name: "{{ my_username }}"
+      shell: /bin/bash
 
 - name : install cargo/rust
   block:
@@ -29,6 +35,13 @@
       when : cargo_exists is success
       shell:
         cmd: /root/.cargo/bin/rustup update
+    - name: link cargo in /usr/local/bin
+      file:
+        src: "/root/.cargo/bin/cargo"
+        dest : "/usr/local/bin/cargo"
+        mode : 0777
+        owner: root
+        state: hard
 
 - name : Install cargo crates
   vars :
@@ -90,6 +103,13 @@
         name : starship
         path : "{{ install_path }}"
         state: "{{ install_state }}"
+
+- name: ensure .config directory exists
+  file:
+    dest : "/home/{{ my_username }}/.config"
+    mode : 0700
+    owner: root
+    state: directory
 
 - name: copy starship configuration
   copy:
