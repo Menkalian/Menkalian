@@ -18,8 +18,12 @@
 - name : install cargo/rust
   block:
     - name         : check if cargo is installed
-      shell        : command -v /root/.cargo/bin/rustup
+      shell        : command -v /root/.cargo/bin/cargo
       register     : cargo_exists
+      ignore_errors: yes
+    - name         : check if cargo is installed
+      shell        : command -v /usr/local/bin/cargo
+      register     : cargo_global_exists
       ignore_errors: yes
     - name   : Download Installer
       when   : cargo_exists is failed
@@ -36,6 +40,7 @@
       shell:
         cmd: /root/.cargo/bin/rustup update
     - name: link cargo in /usr/local/bin
+      when: cargo_global_exists is failed
       file:
         src: "/root/.cargo/bin/cargo"
         dest : "/usr/local/bin/cargo"
@@ -108,7 +113,7 @@
   file:
     dest : "/home/{{ my_username }}/.config"
     mode : 0700
-    owner: root
+    owner: "{{ my_username }}"
     state: directory
 
 - name: copy starship configuration
